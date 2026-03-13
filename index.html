@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>гешенке</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0}
+
+        html,body{height:100%;overflow-x:hidden}
+
+        body{
+            font-family:'Inter',sans-serif;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background:linear-gradient(135deg,#ffd6ea,#ffeaf5);
+            color:#2b2b2b;
+            padding:20px;
+        }
+
+        .a-bg{
+            position:fixed;
+            inset:0;
+            pointer-events:none;
+            overflow:hidden;
+            z-index:0;
+        }
+
+        .falling-a{
+            position:absolute;
+            color:#ff6cab;
+            opacity:0.07;
+            animation:fall linear forwards;
+            user-select:none;
+        }
+
+        @keyframes fall{
+            0%{transform:translateY(-10vh)}
+            100%{transform:translateY(110vh)}
+        }
+
+        .blur-bg{
+            position:fixed;
+            left:50%;
+            top:50%;
+            width:700px;
+            height:700px;
+            transform:translate(-50%,-50%);
+            background:radial-gradient(circle,#ff9ac9,transparent 70%);
+            filter:blur(140px);
+            animation:float 12s ease-in-out infinite;
+            z-index:0;
+        }
+
+        @keyframes float{
+            0%{transform:translate(-55%,-55%)}
+            50%{transform:translate(-45%,-45%)}
+            100%{transform:translate(-55%,-55%)}
+        }
+
+        .container{
+            position:relative;
+            z-index:2;
+            width:100%;
+            max-width:880px;
+            backdrop-filter:blur(25px);
+            background:rgba(255,255,255,0.65);
+            border-radius:28px;
+            padding:48px 44px;
+            box-shadow:0 20px 60px rgba(255,105,180,0.15);
+            text-align:center;
+            animation:fade 1.5s ease;
+        }
+
+        @keyframes fade{
+            from{opacity:0;transform:translateY(20px)}
+            to{opacity:1;transform:translateY(0)}
+        }
+
+        h1{font-weight:600;font-size:42px;margin-bottom:10px}
+
+        .subtitle{opacity:.6;margin-bottom:26px}
+
+        .time-counter{font-size:16px;opacity:.7;margin-bottom:34px}
+
+        .stats{
+            display:grid;
+            grid-template-columns:repeat(2,minmax(0,1fr));
+            gap:20px;
+        }
+
+        .card{
+            background:white;
+            padding:26px;
+            border-radius:18px;
+            box-shadow:0 10px 25px rgba(0,0,0,0.05);
+            transition:.35s;
+        }
+
+        .card:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 15px 35px rgba(0,0,0,0.08)}
+
+        .number{
+            font-size:34px;
+            font-weight:600;
+            background:linear-gradient(90deg,#ff6cab,#ff9ac9);
+            --background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+
+        .label{margin-top:8px;font-size:14px;opacity:.6}
+
+        .secret-btn{
+            margin-top:26px;
+            padding:12px 22px;
+            border-radius:20px;
+            border:none;
+            background:linear-gradient(90deg,#ff6cab,#ff9ac9);
+            color:white;
+            font-weight:500;
+            cursor:pointer;
+            transition:.3s;
+        }
+
+        .secret-btn:hover{transform:scale(1.05)}
+
+        .footer{margin-top:34px;font-size:14px;opacity:.6}
+
+        .letter-overlay{
+            position:fixed;
+            inset:0;
+            background:rgba(255,255,255,0.9);
+            backdrop-filter:blur(20px);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            flex-direction:column;
+            text-align:center;
+            padding:40px 24px;
+            opacity:0;
+            pointer-events:none;
+            transition:.6s;
+            z-index:5;
+        }
+
+        .letter-overlay.show{opacity:1;pointer-events:auto}
+
+        .letter{max-width:600px;font-size:18px;line-height:1.6;margin-bottom:30px}
+
+        .close-btn{
+            padding:10px 18px;
+            border:none;
+            border-radius:16px;
+            background:#ff9ac9;
+            color:white;
+            cursor:pointer;
+        }
+
+        @media (max-width:900px){
+            .container{padding:40px 32px}
+        }
+
+        @media (max-width:700px){
+            body{align-items:flex-start;padding:16px}
+            .container{padding:28px 22px;border-radius:22px}
+            h1{font-size:30px}
+            .subtitle{font-size:14px;margin-bottom:20px}
+            .time-counter{font-size:14px;margin-bottom:26px}
+            .stats{grid-template-columns:1fr;gap:16px}
+            .card{padding:22px}
+            .number{font-size:28px}
+            .label{font-size:13px}
+            .secret-btn{width:100%;margin-top:22px}
+            .footer{font-size:13px;margin-top:24px}
+            .letter{font-size:16px}
+        }
+
+        @media (max-width:380px){
+            h1{font-size:26px}
+            .number{font-size:24px}
+        }
+
+    </style>
+    </head>
+
+    <body>
+        <div class="a-bg" id="a-bg"></div>
+        <div class="blur-bg"></div>
+
+        <div class="container">
+
+        <h1>Всё началось</h1>
+        <div class="subtitle">21.02 и будет длиться вечность</div>
+
+        <div class="time-counter" id="time-counter"></div>
+
+        <div class="stats">
+
+        <div class="card">
+        <div class="number" id="days-together">0</div>
+        <div class="label">дней вместе</div>
+        </div>
+
+        <div class="card">
+        <div class="number">∞</div>
+        <div class="label">поцелуев</div>
+        </div>
+
+        <div class="card">
+        <div class="number">∞</div>
+        <div class="label">романтики</div>
+        </div>
+
+        <div class="card">
+        <div class="number">∞</div>
+        <div class="label">осталось быть вместе</div>
+        </div>
+
+        </div>
+
+        <button class="secret-btn" id="open-letter">💌 гешенке</button>
+
+        <div class="footer">Каждый день с тобой - мой любимый</div>
+
+        </div>
+
+        <div class="letter-overlay" id="letter">
+
+        <div class="letter">
+            Люблю тебя моя любимая девочка ты самая лучшая❤️
+        </div>
+
+        <button class="close-btn" id="close-letter">закрыть</button>
+
+        </div>
+
+        <script>
+            const startDate=new Date("2026-02-21T00:00:00");
+
+            function calculateDays(){
+                const now=new Date();
+                const diff=now-startDate;
+                return Math.floor(diff/(1000*60*60*24));
+            }
+
+            function animateDays(){
+                const daysTogether=calculateDays();
+                const displayElement=document.getElementById("days-together");
+                let currentDay=0;
+                const duration=1500;
+                const stepTime=Math.abs(Math.floor(duration/Math.max(daysTogether,1)));
+                const timer=setInterval(()=>{
+                    currentDay+=1;
+                    displayElement.innerText=currentDay;
+                    if(currentDay>=daysTogether){
+                        clearInterval(timer);
+                        displayElement.innerText=daysTogether;
+                    }   
+                },stepTime);
+            }
+
+            animateDays();
+
+            function updateTime(){
+                const now=new Date();
+                const diff=now-startDate;
+                const days=Math.floor(diff/(1000*60*60*24));
+                const hours=Math.floor((diff/(1000*60*60))%24);
+                const minutes=Math.floor((diff/(1000*60))%60);
+                const seconds=Math.floor((diff/1000)%60);
+
+                document.getElementById("time-counter").innerText=`${days} дней ${hours} часов ${minutes} минут ${seconds} секунд вместе`;
+            }
+
+            setInterval(updateTime,1000);
+            updateTime();
+
+            const openBtn=document.getElementById("open-letter");
+            const letter=document.getElementById("letter");
+            const closeBtn=document.getElementById("close-letter");
+
+            openBtn.onclick=()=>letter.classList.add("show");
+            closeBtn.onclick=()=>letter.classList.remove("show");
+
+            function createFallingA(){
+                const container=document.getElementById("a-bg");
+                const el=document.createElement("div");
+                el.className="falling-a";
+                el.innerText="A";
+                el.style.left=Math.random()*100+"vw";
+                el.style.fontSize=18+Math.random()*70+"px";
+                const duration=5+Math.random()*6;
+                el.style.animationDuration=duration+"s";
+                container.appendChild(el);
+                setTimeout(()=>el.remove(),duration*1000);
+            }
+
+            setInterval(createFallingA,140);
+
+        </script>
+
+    </body>
+</html>
