@@ -270,7 +270,7 @@
                 const minutes=Math.floor((diff/(1000*60))%60);
                 const seconds=Math.floor((diff/1000)%60);
 
-                document.getElementById("time-counter").innerText=`${days} дней ${hours} часов ${minutes} минут ${seconds} секунд вместе`;
+                document.getElementById("time-counter").innerText=`${days} дней ${hours} часов ${minutes} минут ${seconds} секунд`;
             }
 
             setInterval(updateTime,1000);
